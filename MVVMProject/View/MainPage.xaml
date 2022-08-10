@@ -1,0 +1,148 @@
+﻿<Page
+    x:Class="MVVMProject.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MVVMProject"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:vm="using:MVVMProject.ViewModel"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:x1="using:Model"
+    mc:Ignorable="d">
+
+    <Page.Background>
+    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="LightSteelBlue" Offset="1"/>
+    </LinearGradientBrush>
+    </Page.Background>
+    <Page.DataContext>
+        <vm:MainViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <local:StringFormatter x:Key="StringFormatterValueConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition/>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Button x:Name="ExitBtn" Grid.Row="0" Grid.Column="0" Content="Exit" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Click="Exit_Click" FontFamily="Algerian" FontSize="30"/>
+        <TextBlock Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" TextAlignment="Center"
+                   FontSize="75" FontFamily="Algerian" Text="Get your box" TextWrapping="WrapWholeWords"/>
+        <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom" TextAlignment="Center"
+                   FontSize="50" FontFamily="Algerian" Text="All Available" TextWrapping="WrapWholeWords"/>
+        <TextBlock Grid.Column="2" Grid.Row="3" VerticalAlignment="Bottom" TextAlignment="Center"
+                   FontSize="50" FontFamily="Algerian" Text="Queue Time (Days)" TextWrapping="WrapWholeWords"/>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"
+                   FontSize="50" FontFamily="Algerian" Text="Search" TextWrapping="WrapWholeWords"/>
+            <TextBox x:Name="WidthTB" Text="{Binding SearchWidth, Mode=TwoWay}" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 MinWidth="150" PlaceholderText="Width"/>
+            <TextBox x:Name="HeightTB" Text="{Binding SearchHeight, Mode=TwoWay}" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 MinWidth="150" PlaceholderText="Height"/>
+            <TextBox x:Name="AmountTB" Text="{Binding SearchAmount, Mode=TwoWay}" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 MinWidth="150" PlaceholderText="Amount (Default 1)"/>
+            <Button x:Name="SearchBtn" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                 MinWidth="150" Content="Search" Command="{Binding SearchCommand}" IsEnabled="{Binding IsSearchValid, Mode=TwoWay}"/>
+            <Button x:Name="ClearBtn" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                 MinWidth="150" Content="Clear" Click="ClearBtn_Click"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="3" Grid.RowSpan="3">
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"
+                   FontSize="50" FontFamily="Algerian" Text="Add" TextWrapping="WrapWholeWords"/>
+            <TextBox x:Name="AddWidthTB" Text="{Binding AddWidth, Mode=TwoWay}" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 MinWidth="150" PlaceholderText="Width"/>
+            <TextBox x:Name="AddHeightTB" Text="{Binding AddHeight, Mode=TwoWay}" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 MinWidth="150" PlaceholderText="Height"/>
+            <TextBox x:Name="AddAmountTB" Text="{Binding AddAmount, Mode=TwoWay}" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 MinWidth="150" PlaceholderText="Amount (Max 40)"/>
+            <Button x:Name="AddBtn" Command="{Binding AddCommand}" IsEnabled="{Binding IsAddValid, Mode=TwoWay}" 
+                    Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="150" Content="Add"/>
+        </StackPanel>
+
+        <ListView x:Name="GetLV" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
+                  FontFamily="Book Antiqua" BorderThickness="3" BorderBrush="#FF431161"
+                  Background="#66DA0C0C" Margin="15,15,15,15" SelectionChanged="BoxesLV_SelectionChanged"
+                  ItemsSource="{Binding PurchaseBoxes, Mode=TwoWay}" Tapped="BoxesLV_Tapped" DoubleTapped="BoxesLV_DoubleTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x1:Box">
+                    <StackPanel Orientation="Horizontal" Margin="6">
+                        <SymbolIcon Symbol="View" Margin="0,0,12,0"/>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{x:Bind Width, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Width - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
+                            <TextBlock Text="{x:Bind Height, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Height - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind AmountBought}" FontFamily="Book Antiqua"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView x:Name="BoxesLV" Grid.Row="4" Grid.Column="1" Grid.RowSpan="2"
+                  FontFamily="Book Antiqua" BorderThickness="3" BorderBrush="#FF431161"
+                  Background="#66DA0C0C" Visibility="Visible" Margin="15,15,15,15" Tapped="BoxesLV_Tapped" DoubleTapped="BoxesLV_DoubleTapped"
+                  ItemsSource="{Binding Path=AllBoxes, Mode=TwoWay}" SelectedItem="{Binding Path=SelectedBox, Mode=TwoWay}" SelectionChanged="BoxesLV_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x1:Box">
+                    <StackPanel Orientation="Horizontal" Margin="6">
+                        <SymbolIcon Symbol="View" Margin="0,0,12,0"/>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{x:Bind Width, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Width - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
+                            <TextBlock Text="{x:Bind Height, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Height - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Amount, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=Amount - \{0:00\}}" FontFamily="Book Antiqua"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding LastUsedDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Recieved_Goods - \{0:d\}}" FontFamily="Book Antiqua"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding ExpirationDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Expiration_Date - \{0:d\}}" FontFamily="Book Antiqua"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView x:Name="QueueLV" Grid.Row="4" Grid.Column="2" Grid.RowSpan="2" FontFamily="Book Antiqua" BorderThickness="3"
+                  BorderBrush="#FF431161" Background="#66DA0C0C" Visibility="Visible" IsItemClickEnabled="False"
+                  Margin="15,15,15,15" ItemsSource="{Binding QueueBoxes, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x1:Box">
+                    <StackPanel Orientation="Horizontal" Margin="6">
+                        <SymbolIcon Symbol="Clock" Margin="0,0,12,0"/>
+                        <TextBlock Text="{x:Bind DateDifference}" FontWeight="ExtraBold" FontSize="37" Margin="0,0,12,0" FontFamily="Book Antiqua"/>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{x:Bind Width, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Width - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
+                            <TextBlock Text="{x:Bind Height, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Height - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Amount, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=Amount - \{0:00\}}" FontFamily="Book Antiqua"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding LastUsedDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Recieved_Goods - \{0:d\}}" FontFamily="Book Antiqua"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding ExpirationDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Expiration_Date - \{0:d\}}" FontFamily="Book Antiqua"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <StackPanel x:Name="SubRemSP" Grid.Row="4" Grid.Column="3" HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" Visibility="Visible">
+            <TextBox Text="{Binding RemoveAmount, Mode=TwoWay}" x:Name="AmountRemoveTB" PlaceholderText="Enter Amount"/>
+            <Button x:Name="RemoveBtn" Command="{Binding RemoveCommand}" IsEnabled="{Binding IsRemoveValid, Mode=TwoWay}"
+                HorizontalAlignment="Center" Margin="0,10,0,0"
+                MinWidth="150" Content="Remove"/>
+        </StackPanel>
+    </Grid>
+</Page>
