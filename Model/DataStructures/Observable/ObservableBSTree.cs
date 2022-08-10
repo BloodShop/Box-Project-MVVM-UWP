@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.DataStructures
+namespace Model.DataStructures.Observable
 {
     public class ObservableBSTree<TKey, TValue> : BSTree<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
         where TKey : IComparable
@@ -37,24 +37,6 @@ namespace Model.DataStructures
             var x = base.RemoveNode(node);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, x/*, */));
             return x;
-        }
-
-        public override IEnumerable GetRange(TKey minKey, TKey maxKey) => GetRange(_root, minKey, maxKey);
-        protected override IEnumerable GetRange(TreeNode node, TKey minKey, TKey maxKey)
-        {
-            if (node == null) yield break;
-
-            if (minKey.CompareTo(node.Key) < 0)
-                foreach (TreeNode leftNode in GetRange(node.Left, minKey, maxKey))
-                    yield return leftNode;
-
-            // If NODE's kEY lies in range, then YIELD RETURNS NODE
-            if (minKey.CompareTo(node.Key) <= 0 && maxKey.CompareTo(node.Key) >= 0)
-                yield return node;
-
-            // Recursively call the right subtree
-            foreach (TreeNode rightNode in GetRange(node.Right, minKey, maxKey))
-                yield return rightNode;
         }
     }
 }

@@ -5,16 +5,14 @@ using System.Runtime.CompilerServices;
 
 namespace Model
 {
-    public class Box : IFormattable, ICloneable, IComparable<Box>
+    public class Box : IFormattable, ICloneable/*, IComparable<Box>*/
     {
         public Func<string> BackSupply { get; private set; }
         public Func<int, bool> WarningQnt { get => (x) => _amount <= x; }
 
         int _amount;
         int _amountBought;
-        int _dateDifference;
-        DateTime _lastUsedDate;
-        DateTime _expirationDate;
+        DateTime _lastUsedDate = DateTime.Now;
         double _width;
         double _height;
 
@@ -33,8 +31,7 @@ namespace Model
         public double Width { get => _width; set => _width = value; }
         public double Height { get => _height; set => _height = value; }
         public DateTime LastUsedDate { get => _lastUsedDate; set => _lastUsedDate = value; }
-        public DateTime ExpirationDate { get => _expirationDate; set { if (DateDifference < 60) _expirationDate = value; } }
-        public int DateDifference { get => (_expirationDate - _lastUsedDate).Days; set => _dateDifference = (_expirationDate - _lastUsedDate).Days; }
+        public int DateDifference { get => (DateTime.Now - _lastUsedDate).Days;  }
         /// <summary>
         /// Initialize Box with three parameters
         /// </summary>
@@ -46,14 +43,10 @@ namespace Model
             _width = Math.Round(width, 2);
             _height = Math.Round(height, 2);
             Amount = amount;
-            _lastUsedDate = DateTime.Now;
-            _expirationDate = _lastUsedDate.AddDays(20);
         }
-        public Box() { }
         public object Clone() => MemberwiseClone();
-        public int CompareTo(Box other) => _dateDifference.CompareTo(other._dateDifference);
         public override string ToString() => $"Box's Dimensions:\nWidth - {_width:0.00}\nHeight - {_height:0.00}." +
-            $"\nAmount Left: {_amount}\nDate: {_lastUsedDate:d}\nExpiry Date: {ExpirationDate:d}\n";
+            $"\nAmount Left: {_amount}\nDate: {_lastUsedDate:d}\nExpiry Date: {_lastUsedDate.AddDays(30):d}\n";
         public string ToString(string format, IFormatProvider formatProvider)
         {
             switch (format)

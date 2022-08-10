@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 //using static Model.DataStructures.ObservableConcurrentQueue<T>;
 
-namespace Model.DataStructures
+namespace Model.DataStructures.Observable
 {
 #if ConcurrentQueue
     /// <summary>

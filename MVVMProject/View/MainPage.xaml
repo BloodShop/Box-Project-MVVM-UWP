@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:x1="using:Model"
     mc:Ignorable="d">
-
+    
     <Page.Background>
     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="LightSteelBlue" Offset="1"/>
@@ -36,9 +36,11 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Timer" Text="{Binding TimeToday, Mode=TwoWay}" Grid.Column="100" Grid.Row="0"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Algerian" FontSize="30"/>
 
         <Button x:Name="ExitBtn" Grid.Row="0" Grid.Column="0" Content="Exit" HorizontalAlignment="Center" VerticalAlignment="Center"
-                Click="Exit_Click" FontFamily="Algerian" FontSize="30"/>
+                Click="Exit_Click" FontFamily="Algerian" FontSize="30" Command="{Binding ExitCommnd}"/>
         <TextBlock Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" TextAlignment="Center"
                    FontSize="75" FontFamily="Algerian" Text="Get your box" TextWrapping="WrapWholeWords"/>
         <TextBlock Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom" TextAlignment="Center"
@@ -76,7 +78,7 @@
                     Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="150" Content="Add"/>
         </StackPanel>
 
-        <ListView x:Name="GetLV" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
+        <ListView x:Name="GetPurchaseLV" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
                   FontFamily="Book Antiqua" BorderThickness="3" BorderBrush="#FF431161"
                   Background="#66DA0C0C" Margin="15,15,15,15" SelectionChanged="BoxesLV_SelectionChanged"
                   ItemsSource="{Binding PurchaseBoxes, Mode=TwoWay}" Tapped="BoxesLV_Tapped" DoubleTapped="BoxesLV_DoubleTapped">
@@ -97,8 +99,8 @@
         </ListView>
         <ListView x:Name="BoxesLV" Grid.Row="4" Grid.Column="1" Grid.RowSpan="2"
                   FontFamily="Book Antiqua" BorderThickness="3" BorderBrush="#FF431161"
-                  Background="#66DA0C0C" Visibility="Visible" Margin="15,15,15,15" Tapped="BoxesLV_Tapped" DoubleTapped="BoxesLV_DoubleTapped"
-                  ItemsSource="{Binding Path=AllBoxes, Mode=TwoWay}" SelectedItem="{Binding Path=SelectedBox, Mode=TwoWay}" SelectionChanged="BoxesLV_SelectionChanged">
+                  Background="#66DA0C0C" Visibility="Visible" Margin="15,15,15,15" DoubleTapped="BoxesLV_DoubleTapped"
+                  ItemsSource="{Binding Path=AllBoxes, Mode=TwoWay}" SelectedItem="{Binding Path=SelectedBox, Mode=TwoWay}" >
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="x1:Box">
                     <StackPanel Orientation="Horizontal" Margin="6">
@@ -116,14 +118,14 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView x:Name="QueueLV" Grid.Row="4" Grid.Column="2" Grid.RowSpan="2" FontFamily="Book Antiqua" BorderThickness="3"
+        <ListView x:Name="QueueDateLV" Grid.Row="4" Grid.Column="2" Grid.RowSpan="2" FontFamily="Book Antiqua" BorderThickness="3"
                   BorderBrush="#FF431161" Background="#66DA0C0C" Visibility="Visible" IsItemClickEnabled="False"
-                  Margin="15,15,15,15" ItemsSource="{Binding QueueBoxes, Mode=TwoWay}">
+                  Margin="15,15,15,15" ItemsSource="{Binding DateQueueBoxes, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="x1:Box">
                     <StackPanel Orientation="Horizontal" Margin="6">
                         <SymbolIcon Symbol="Clock" Margin="0,0,12,0"/>
-                        <TextBlock Text="{x:Bind DateDifference}" FontWeight="ExtraBold" FontSize="37" Margin="0,0,12,0" FontFamily="Book Antiqua"/>
+                        <TextBlock Text="{Binding DateDifference}" FontWeight="ExtraBold" FontSize="37" Margin="0,0,12,0" FontFamily="Book Antiqua"/>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="{x:Bind Width, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Width - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
                             <TextBlock Text="{x:Bind Height, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Height - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>

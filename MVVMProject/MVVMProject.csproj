@@ -168,7 +168,6 @@
       <Version>6.0.5</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{f4f7d306-6f9b-43fe-9910-736690dc7248}</Project>

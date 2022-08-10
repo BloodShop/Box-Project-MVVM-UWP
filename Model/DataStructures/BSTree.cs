@@ -6,6 +6,10 @@ using System.ComponentModel;
 
 namespace Model.DataStructures
 {
+    /// <summary>
+    /// Traversal Enum to let the user choose what Order / Print
+    /// to get the BSTree<Tkey, Tvalue> <see cref="BSTree{Tkey, Tvalue}"/>
+    /// </summary>
     public enum Traversal { InOrder, PreOrder, PostOrder, LevelOrder, RightInOrder }
 
     /// <summary>
@@ -15,8 +19,7 @@ namespace Model.DataStructures
     /// </summary>
     /// <typeparam name="Tkey"></typeparam>
     /// <typeparam name="Tvalue"></typeparam>
-    public class BSTree<Tkey, Tvalue> : /*INotifyCollectionChanged, INotifyPropertyChanged,*/ IEnumerable 
-        where Tkey : IComparable
+    public class BSTree<Tkey, Tvalue> : IEnumerable where Tkey : IComparable
     {
         /// <summary>
         /// Root (top) of the binarySearch tree
@@ -61,7 +64,6 @@ namespace Model.DataStructures
             public Tvalue Value { get; set; }
             public TreeNode Left { get; set; }
             public TreeNode Right { get; set; }
-            // public bool Visted { get; set; }
             public TreeNode(Tkey key, Tvalue value)
             {
                 Key = key;
@@ -197,11 +199,7 @@ namespace Model.DataStructures
         public TreeNode Remove(Tkey key)
         {
             if (!IsEmpty()) // If the tree is empty
-            {
-                TreeNode t = Remove(_root, key);
-                //CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, t));
-                return _root = t;
-            }
+                return _root = Remove(_root, key);
             return null;
         }
         TreeNode Remove(TreeNode node, Tkey key) // O(log n)

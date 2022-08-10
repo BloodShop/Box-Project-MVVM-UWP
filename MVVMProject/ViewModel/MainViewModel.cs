@@ -1,36 +1,65 @@
 ﻿using DAL;
 using Model;
 using Model.DataStructures;
+using Model.DataStructures.Observable;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
 
 namespace MVVMProject.ViewModel
-{ // Encapsulate the Concept that Varies // Favor Composition over Inheritence
+{ // Encapsulate the Concept that Varies 
     public class MainViewModel : MainViewModelBase
     {
+        readonly static DispatcherTimer timer = new DispatcherTimer();
+        readonly static DispatcherTimer QueueTimer = new DispatcherTimer();
+        static DateTime _timeToday = DateTime.Now;
+        public DateTime TimeToday
+        {
+            get => _timeToday;
+            private set
+            {
+                _timeToday = value;
+                RaisePropertyChanged(nameof(TimeToday));
+            }
+        }
+
+        /// <summary>
+        /// The store that manages the boxes with minimum Time complexity
+        /// </summary>
         static BoxesBST _boxBST = new BoxesBST();
-        public ObservableCollection<Box> PurchaseBoxes { get; private set; } = new ObservableDoublyLinkedQueue<Box>();
-        public ObservableCollection<Box> QueueBoxes { get; private set; } = new DoublyLinkedQueue<Box>();
+        /// <summary>
+        /// List of 'wanted' boxes which the user wants to purchase --> Binded with GetPurchaseLV (ListView[xaml])
+        /// </summary>
+        public ObservableCollection<Box> PurchaseBoxes { get; private set; } = new DoublyLinkedQueue<Box>();
+        /// <summary>
+        /// List of boxes which has an exipiration date --> Binded with QueueDateLV (ListView[xaml])
+        /// </summary>
+        public ObservableCollection<Box> DateQueueBoxes { get; private set; } = new DoublyLinkedQueue<Box>();
+        /// <summary>
+        /// List of all boxes in store --> Binded with BoxesLV (ListView[xaml])
+        /// </summary>
         public ObservableCollection<Box> AllBoxes { get; private set; } = new DoublyLinkedQueue<Box>();
+        /// <summary>
+        /// The selectedBox in the BoxesLV (AllBoxes) which the user wants to remove
+        /// </summary>
         public Box SelectedBox { get; set; }
 
-        public MainViewModel() => InitListViews();
-        void InitListViews() 
+        public MainViewModel()
         {
-            QueueBoxes?.Clear();
+            Init_Timer();
+            InitListViews();
+        }
+        void InitListViews() // Init the listViews
+        {
+            DateQueueBoxes?.Clear();
             AllBoxes?.Clear();
             foreach (Box boxQ in _boxBST.DateQ)
-                QueueBoxes.Add(boxQ);
-            
+                DateQueueBoxes.Add(boxQ);
+
             foreach (Box box in _boxBST)
                 AllBoxes.Add(box);
         }
@@ -159,44 +188,23 @@ namespace MVVMProject.ViewModel
             }
         }
         double _addHeight;
-        //public DateTime LastUsedDate
-        //{
-        //    get => _lastUsedDate;
-        //    set
-        //    {
-        //        _lastUsedDate = value;
-        //        RaisePropertyChanged(nameof(LastUsedDate));
-        //    }
-        //}
-        //DateTime _lastUsedDate;
-        //public DateTime ExpirationDate
-        //{
-        //    get => _expirationDate;
-        //    set
-        //    {
-        //        if (DateDifference < 60) _expirationDate = value;
-        //        RaisePropertyChanged(nameof(ExpirationDate));
-        //    }
-        //}
-        //DateTime _expirationDate;
-        //public int DateDifference
-        //{
-        //    get => (_expirationDate - _lastUsedDate).Days;
-        //    set
-        //    {
-        //        _dateDifference = (_expirationDate - _lastUsedDate).Days;
-        //        RaisePropertyChanged(nameof(DateDifference));
-        //    }
-        //}
-        //int _dateDifference;
         #endregion
         #endregion
-
+        // Buttons command
         public ICommand AddCommand => new DelegateCommand(AddBox);
         public ICommand RemoveCommand => new DelegateCommand(RemoveBox);
         public ICommand SearchCommand => new DelegateCommand(SearchBoxes);
+        public ICommand ExitCommnd => new DelegateCommand(ExitSave);
 
-        public void AddBox()
+        void ExitSave()
+        {
+            DataBase.SaveJson(AllBoxes);
+            Application.Current.Exit();
+        }
+        /// <summary>
+        /// Add a box to the repository by filling the Amount,Width and height
+        /// </summary>
+        void AddBox()
         {
             if (_addAmount > _boxBST.MAX_AMOUNT_BOXES)
             {
@@ -204,11 +212,12 @@ namespace MVVMProject.ViewModel
                 _addAmount = _boxBST.MAX_AMOUNT_BOXES;
             }
             _boxBST.Add(new Box(_addWidth, _addHeight, _addAmount));
-            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            IsAddValid = false;
             InitListViews();
         }
-        public void RemoveBox()
+        /// <summary>
+        /// Removes the selected box from the repository by filling Amount (To remove) and selecting Box
+        /// </summary>
+        void RemoveBox()
         {
             if (SelectedBox != null && _removeAmount > 0 && _removeAmount <= SelectedBox.Amount)
             {
@@ -217,29 +226,24 @@ namespace MVVMProject.ViewModel
                 InitListViews();
             }
         }
+        /// <summary>
+        /// Searches the box by the dimensions you ask for by filling Amount,Width, and Height
+        /// </summary>
         async void SearchBoxes()
         {
             try
             {
-                //PurchaseBoxes?.Clear();
+                PurchaseBoxes?.Clear();
                 foreach (Box b in _boxBST.Get(_searchWidth, _searchHeight, _searchAmount))
-                {
                     PurchaseBoxes?.Add(b/*, (x) => x.DateDifference < b.DateDifference*/);
-                    //RaisePropertyChanged(nameof(Box));
-                }
 
-                IUICommand resultDialog = await VerifyPurchase();
+                IUICommand resultDialog = await VerifyMessage();
                 if (resultDialog.Label == "No")
                     _boxBST.Retrieve();
                 else
                 {
                     foreach (Box box in PurchaseBoxes)
-                    {
                         if (box.WarningQnt(5)) Message(box.ToString(), "Warning quantity");
-                        //if (box.Amount == 0) 
-                        //else RaisePropertyChanged(nameof(Box));
-                    }
-                    IsSearchValid = false;
                     InitListViews();
                 }
             }
@@ -249,13 +253,46 @@ namespace MVVMProject.ViewModel
                 await Message(ex.Message, "Error 1");
             }
         }
+        /// <summary>
+        /// Represent a message to screen
+        /// </summary>
+        /// <param name="message">The message you want to show</param>
+        /// <param name="title">The Title you want to show</param>
+        /// <returns></returns>
+
         async Task Message(string message, string title) => await new MessageDialog(message, title).ShowAsync();
-        async Task<IUICommand> VerifyPurchase() // MessageDialog Yes/No verification before deleteing an Item
+        /// <summary>
+        /// Message with yes and no commands
+        /// </summary>
+        /// <returns></returns>
+        async Task<IUICommand> VerifyMessage() // MessageDialog Yes/No verification before deleteing an Item
         {
             MessageDialog dialog = new MessageDialog("Are you sure?", "Purchase Items");
             dialog.Commands.Add(new UICommand("Yes"));
             dialog.Commands.Add(new UICommand("No"));
             return await dialog.ShowAsync();
+        }
+
+        void Init_Timer() // Initialize Timer when app loaded
+        {
+            timer.Interval = new TimeSpan(0, 0, 0, 10);
+            QueueTimer.Interval = new TimeSpan(0, 0, 0, 1);
+            timer.Tick += ManageTmr_Tick;
+            QueueTimer.Tick += ShowTime_Tick;
+            timer.Start();
+            QueueTimer.Start();
+        }
+        private void ShowTime_Tick(object sender, object e) => TimeToday = DateTime.Now;
+
+        void ManageTmr_Tick(object sender, object e) // Deletes front box if DateDiffernce is 0 - every 24 hours
+        {
+            var t = _boxBST.DateQ.Front;
+            while (!_boxBST.DateQ.IsEmpty() && (DateTime.Now - t.Data.LastUsedDate).Days >= _boxBST.DAYS_TO_EXPIRE)
+            {
+                _boxBST.Remove((Box)_boxBST.DateQ.DeQueue().Clone(), int.MaxValue);
+                t = t.Next;
+            }
+            InitListViews();
         }
     }
 }

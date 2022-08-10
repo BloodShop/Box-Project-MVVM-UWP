@@ -6,27 +6,27 @@ using System.Collections.Generic;
 using static Model.DataStructures.BSTree<double, Model.DataStructures.BSTree<double, Model.Box>>;
 
 namespace DAL
-{
+{ // Encapsulate the Concept that Varies 
     public class BoxesBST : IEnumerable //, ITraversal
     {
-        static bool _init = true;
         static Configuration _config;
+        static bool _init = true;
 
         static BSTree<double, BSTree<double, Box>> _main;
         static BSTree<double, BSTree<double, Box>> _cloneTree;
         static DoublyLinkedQueue<Box> _dateQ;
         static DoublyLinkedQueue<Box> _cloneQ;
 
-        public double PERCENTAGES_SEARCH_RANGE { get; private set; }
-        public int ADD_EXPIRY_DAYS { get; private set; }
-        public int WARNING_QUANTITY { get; private set; }
-        public int MAX_AMOUNT_BOXES { get; private set; }
+        public readonly double PERCENTAGES_SEARCH_RANGE;
+        public readonly int ADD_EXPIRY_DAYS;
+        public readonly int WARNING_QUANTITY;
+        public readonly int MAX_AMOUNT_BOXES;
+        public readonly int DAYS_TO_EXPIRE;
 
         public Action Retrieve { get => () => { _main = _cloneTree; _dateQ = _cloneQ; }; }
         public DoublyLinkedQueue<Box> DateQ { get => _dateQ; }
 
-        public BoxesBST() => Init();
-        void Init() // Initialized once 
+        public BoxesBST()
         {
             if (_init)
             {
@@ -35,6 +35,7 @@ namespace DAL
                 ADD_EXPIRY_DAYS = _config.Data.AddExpiryDate;
                 WARNING_QUANTITY = _config.Data.WarningQuantity;
                 MAX_AMOUNT_BOXES = _config.Data.MaxAmountOfBoxes;
+                DAYS_TO_EXPIRE = _config.Data.DaysToExpire;
 
                 _ = DataBase.Instance;
                 _main = new BSTree<double, BSTree<double, Box>>();
@@ -91,13 +92,13 @@ namespace DAL
                 else
                 {
                     yTree.Add(box.Height, box);
-                    box.SelfRefrence = _dateQ.Add(box, (x) => x.DateDifference < box.DateDifference);
+                    box.SelfRefrence = _dateQ.EnQueue(box);
                 }
             else // if width dimension doesn't exist
             {
                 yTree = new BSTree<double, Box>(box.Height, box);
                 _main.Add(box.Width, yTree);
-                box.SelfRefrence = _dateQ.Add(box, (x) => x.DateDifference < box.DateDifference);
+                box.SelfRefrence = _dateQ.EnQueue(box);
             }
         }
         public Box Remove(Box box, int amount)
@@ -111,7 +112,7 @@ namespace DAL
                     {
                         box.Amount = 0;
                         yTree.Remove(box.Height);
-                        _dateQ.DeleteNode(box.SelfRefrence); // O(1)
+                        if (amount != int.MaxValue) _dateQ.DeleteNode(box.SelfRefrence); // O(1)
                         current.Amount -= 0;
                     }
                     else
@@ -147,12 +148,11 @@ namespace DAL
                     box.AmountBought = amount;
                     box.Amount -= amount;
                     box.LastUsedDate = DateTime.Now;
-                    box.ExpirationDate = box.ExpirationDate.AddDays(ADD_EXPIRY_DAYS);
                     amount = 0;
                     yield return box;
                     {
                         _dateQ.DeleteNode(box.SelfRefrence); // O(1)
-                        box.SelfRefrence = _dateQ.Add(box, (x) => x.DateDifference < box.DateDifference);
+                        box.SelfRefrence = _dateQ.EnQueue(box);
                     }
                 }
             }
@@ -214,7 +214,7 @@ namespace DAL
             foreach (Box box in _dateQ)
             {
                 var clone = (Box)box.Clone();
-                _cloneQ.Add(clone, (x) => x.DateDifference < box.DateDifference);
+                _cloneQ.EnQueue(clone);
             }
         }
         public IEnumerator GetEnumerator()

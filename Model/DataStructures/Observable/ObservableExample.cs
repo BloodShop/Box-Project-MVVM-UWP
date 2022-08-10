@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.DataStructures
+namespace Model.DataStructures.Observable
 {
     public sealed class ObservableConcurrentDictionary<TKey, TValue>
         : ConcurrentDictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged

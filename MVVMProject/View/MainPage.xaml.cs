@@ -16,20 +16,7 @@ namespace MVVMProject
         public MainPage() => this.InitializeComponent();
 
         #region MyComfort
-        readonly static DispatcherTimer timer = timer = new DispatcherTimer();
-        static DateTime date = DateTime.Today;
-        void Init_Timer() // Initialize Timer when app loaded
-        {
-            timer.Interval = new TimeSpan(0, 0, 0, 5);
-            timer.Tick += ManageTmr_Tick;
-            timer.Start();
-        }
-        void ManageTmr_Tick(object sender, object e) // Deletes front box if DateDiffernce is 0 - every 24 hours
-        {
-            if (!(date < DateTime.Today)) return;
-            //while (mv.EnumQu.Front.Data.DateDifference <= 0)
-            //    mv.BoxBST.Remove(mv.EnumQu.Front.Data);
-        }
+        #region Copy to ClipBoard Height and Width
         void ClearBtn_Click(object sender, RoutedEventArgs e) /* Refresh(); */
         {
             WidthTB.Text = string.Empty;
@@ -40,16 +27,8 @@ namespace MVVMProject
             AddHeightTB.Text = string.Empty;
             AmountRemoveTB.Text = string.Empty;
         }
-        #region Copy to ClipBoard Height and Width
-        void BoxesLV_Tapped(object sender, TappedRoutedEventArgs e) // Copy width to ClipBoard
-        {
-            if (BoxesLV.SelectedIndex >= 0)
-            {
-                DataPackage dp = new DataPackage(); // Copy To clipboard the guid of the selected item
-                dp.SetText($"{((Box)BoxesLV?.SelectedItem)?.Width}");
-                Clipboard.SetContent(dp);
-            }
-        }
+        void BoxesLV_Tapped(object sender, TappedRoutedEventArgs e) { }
+        void BoxesLV_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
         void BoxesLV_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) // Copy height to ClipBoard 
         {
             if (BoxesLV.SelectedIndex >= 0)
@@ -64,15 +43,6 @@ namespace MVVMProject
         #endregion
         #region Json
         readonly string fileName = "exposure.json";
-        //async void SaveData(string path, object data)
-        //{
-        //    using (StreamWriter file = File.CreateText(path))
-        //    {
-        //        JsonSerializer serializer = new JsonSerializer();
-        //        //serialize object directly into file stream
-        //        serializer.Serialize(file, data);
-        //    }
-        //}
         async void LoadDataBaseJson()
         {
             try
@@ -101,11 +71,10 @@ namespace MVVMProject
         }
         void Exit_Click(object sender, RoutedEventArgs e)
         {
-            Save_Click(this, null);
-            Application.Current.Exit();
+            //Save_Click(this, null);
+            //Application.Current.Exit();
         }
         #endregion
-        private void BoxesLV_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
         #endregion
     }
 }
