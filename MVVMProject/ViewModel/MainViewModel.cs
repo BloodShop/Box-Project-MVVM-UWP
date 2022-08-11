@@ -207,16 +207,7 @@ namespace MVVMProject.ViewModel
         /// </summary>
         void AddBox()
         {
-            if (!_boxBST.Contains(_addWidth, _addHeight, out Box box))
-            {
-                if (_addAmount > _boxBST.MAX_AMOUNT_BOXES)
-                {
-                    Message($"Cannot add more boxes than maximum\n{_addAmount - _boxBST.MAX_AMOUNT_BOXES} boxes were Retrieved", "Back Supply");
-                    AddAmount = _boxBST.MAX_AMOUNT_BOXES;
-                }
-                _boxBST.Add(new Box(_addWidth, _addHeight, _addAmount));
-            }
-            else
+            if (_boxBST.Contains(_addWidth, _addHeight, out Box box))
             {
                 if (_addAmount + box.Amount > _boxBST.MAX_AMOUNT_BOXES)
                 {
@@ -224,6 +215,15 @@ namespace MVVMProject.ViewModel
                     AddAmount = _boxBST.MAX_AMOUNT_BOXES - box.Amount;
                 }
                 _boxBST.AddToExicting(box, _addAmount);
+            }
+            else
+            {
+                if (_addAmount > _boxBST.MAX_AMOUNT_BOXES)
+                {
+                    Message($"Cannot add more boxes than maximum\n{_addAmount - _boxBST.MAX_AMOUNT_BOXES} boxes were Retrieved", "Back Supply");
+                    AddAmount = _boxBST.MAX_AMOUNT_BOXES;
+                }
+                _boxBST.Add(new Box(_addWidth, _addHeight, _addAmount));
             }
             
             InitListViews();
@@ -290,7 +290,7 @@ namespace MVVMProject.ViewModel
         void Init_Timer() // Initialize Timer when app loaded
         {
             QueueTimer.Interval = new TimeSpan(0, 0, 0, 1);
-            timer.Interval = new TimeSpan(0, 0, 2, 0);
+            timer.Interval = new TimeSpan(0, 0, 10, 0);
             QueueTimer.Tick += ShowTime_Tick;
             timer.Tick += ManageTmr_Tick;
             QueueTimer.Start();
@@ -300,6 +300,7 @@ namespace MVVMProject.ViewModel
 
         void ManageTmr_Tick(object sender, object e) // Deletes front box if DateDiffernce is 0 - every 24 hours
         {
+            if (_boxBST.DateQ.IsEmpty()) return;
             var qNode = _boxBST.DateQ.Peek().SelfRefrence;
             while (!_boxBST.DateQ.IsEmpty() && (DateTime.Now - qNode.Data.LastUsedDate).Days >= _boxBST.DAYS_TO_EXPIRE)
             {

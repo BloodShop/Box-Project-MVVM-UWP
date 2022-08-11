@@ -181,7 +181,7 @@ namespace Model.DataStructures
             if (del.Prev == null)
             {
                 _front = del.Next;
-                _front.Prev = null;
+                if(del.Next != null) _front.Prev = null;
             }
             else if (del.Next == null)
             {
@@ -195,6 +195,7 @@ namespace Model.DataStructures
             }
             Size--;
             return;
+
             #region One-way LinkedList queue
             //// If node to be deleted is Front node
             //if (Front == del)

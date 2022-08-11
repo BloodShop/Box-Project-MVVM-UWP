@@ -37,7 +37,7 @@ namespace DAL
             {
                 if (i % 7 == 0 || i % 5 == 0) m = r.NextDouble() * 100;
                 Boxes[i] = new Box(m, r.Next(5, 40), r.Next(1, 20));
-                Boxes[i].LastUsedDate = new DateTime(2022, 8, 01);
+                Boxes[i].LastUsedDate = new DateTime(2022, 7, 02);
             }
         }
         public static void SaveDataBaseJson(ObservableCollection<Box> collection)

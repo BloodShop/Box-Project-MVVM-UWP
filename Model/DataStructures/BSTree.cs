@@ -96,7 +96,15 @@ namespace Model.DataStructures
             #endregion
 #endif
         }
+        /// <summary>
+        /// Returns a boolean wheather the Tree is empty or not
+        /// </summary>
+        /// <returns></returns>
         public bool IsEmpty() => _root == null; // O(1)
+        /// <summary>
+        /// Return a boolean whethear the Tree is binary Search Tree
+        /// </summary>
+        /// <returns></returns>
         public bool IsBST() => IsBST(_root);
         bool IsBST(TreeNode node)
         {
@@ -113,6 +121,10 @@ namespace Model.DataStructures
 
             return true;
         }
+        /// <summary>
+        /// Return and integer number with the height of the Tree
+        /// </summary>
+        /// <returns></returns>
         public int Height() => Height(_root); // O(log n)
         int Height(TreeNode node) // Compute the height of the BSTree
         {
@@ -128,54 +140,11 @@ namespace Model.DataStructures
                 else return (rightH + 1);
             }
         }
-
-        //public void Add(TreeNode xNode, Tkey key2/*, Action action = null*/)
-        //{
-        //    if (xNode.Value is BSTree<Tkey, Tvalue> yBSTree)
-        //    {
-        //        if (!IsEmpty())
-        //        {
-        //            _root = new TreeNode(xNode.Key, xNode.Value);
-        //            return;
-        //        }
-        //        TreeNode temp = FindNode(xNode.Key);
-        //        if (temp == null)
-        //            Add(xNode.Key, xNode.Value, _root);
-        //        else
-        //        {
-        //            TreeNode nodeY = yBSTree.FindNode(key2);
-        //            if (nodeY == null)
-        //                yBSTree.Add(new TreeNode(key2, ));
-        //            //else action?.Invoke();
-        //        }
-        //    }
-        //    else if (xNode.Value is Tvalue)
-        //    {
-        //        ////
-        //    }
-        //}
-        //public void Add(Tkey keyX, Tkey keyY)
-        //{
-        //    if (!IsEmpty())
-        //    {
-        //        var bst = new BSTree<Tkey, Tvalue>();
-        //        bst.AddNodeY(keyY); 
-        //        _root = new TreeNode(keyX, (Tvalue)Convert.ChangeType(bst, typeof(Tvalue)));
-        //        return;
-        //    }
-        //    TreeNode temp = FindNode(keyX);
-        //    if (temp == null)
-        //        Add(keyX, temp.Value, _root);
-        //    else
-        //    {
-        //        var yBSTree = temp.Value as BSTree<Tkey, Tvalue>;
-        //        TreeNode nodeY = yBSTree.FindNode(keyY);
-        //        if (nodeY == null)
-        //            yBSTree.AddNodeY(keyY);
-        //        //else action?.Invoke();
-        //    }
-        //}
-
+        /// <summary>
+        /// Add <see cref="Tkey"/> and <see cref="Tvalue"/> to the BinarySearch tree
+        /// </summary>
+        /// <param name="key">The key of the the node to be added <see cref="Tkey"/></param>
+        /// <param name="value">The value of the the node to be added <see cref="Tvalue"/></param>
         public void Add(Tkey key, Tvalue value) // O(log n)
         {
             if (IsEmpty()) _root = new TreeNode(key, value);
@@ -196,6 +165,11 @@ namespace Model.DataStructures
                 else Add(key, value, node.Left);
             }
         }
+        /// <summary>
+        /// Removes the node from the tree by his <see cref="Tkey"/>
+        /// </summary>
+        /// <param name="key">The key of the node to be removed <see cref="Tkey"/></param>
+        /// <returns></returns>
         public TreeNode Remove(Tkey key)
         {
             if (!IsEmpty()) // If the tree is empty
@@ -222,6 +196,11 @@ namespace Model.DataStructures
             }
             return node;
         }
+        /// <summary>
+        /// Remove the node from the tree by the given <see cref="TreeNode"/>
+        /// </summary>
+        /// <param name="node">The given node to be removed from the tree</param>
+        /// <returns></returns>
         public TreeNode RemoveNode(TreeNode node) // O(1)
         {
             // node with only one child or no child
@@ -233,7 +212,6 @@ namespace Model.DataStructures
             node.Key = GetMinimum(node.Right); // Node with two children
             node.Right = Remove(node.Right, node.Key); // Delete the inOrder successor
 
-            //CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, node));
             return node;
         }
         Tkey GetMinimum(TreeNode node) // O(log n)
@@ -246,20 +224,12 @@ namespace Model.DataStructures
             }
             return minv;
         }
-
-        //public TreeNode FindNode(Tkey key) => FindNode(key, _root);
-        //TreeNode FindNode(Tkey key, TreeNode node)
-        //{
-        //    if (node == null) return default;
-        //    int comp = node.CompareTo(key);
-
-        //    if (comp == 0) return node;
-        //    else if (comp > 0)
-        //        return FindNode(key, node.Right);
-        //    else // (comp < 0)
-        //        return FindNode(key, node.Left);
-        //}
-
+        /// <summary>
+        /// Return a boolean wheather found the <paramref name="value"/> or not by giving the <see cref="Tkey"/>
+        /// </summary>
+        /// <param name="key">The key that hold the value you are searching for</param>
+        /// <param name="value">Out parameter that will be returned weather it was found</param>
+        /// <returns></returns>
         public bool FindValue(Tkey key, out Tvalue value) // O(log n)
         {
             if (IsEmpty())
@@ -283,6 +253,12 @@ namespace Model.DataStructures
             else // (comp > 0)
                 return FindValue(key, node.Left);
         }
+        /// <summary>
+        /// Return a boolean wheather found the <see cref="TreeNode"/> or not by giving the <see cref="Tkey"/>
+        /// </summary>
+        /// <param name="key">The key that is contained at the node <paramref name="key"/></param>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public bool FindNode(Tkey key, out TreeNode node) // O(log n)
         {
             if (IsEmpty())
@@ -304,15 +280,25 @@ namespace Model.DataStructures
             else // (comp > 0)
                 return FindNode(key, node.Left);
         }
+        /// <summary>
+        /// Returns the node wheather it exists
+        /// </summary>
+        /// <param name="key">The key we are searching for to get the node</param>
+        /// <returns>The <see cref="TreeNode"/> to be found or default</returns>
         public TreeNode FindNode(Tkey key) // O(log n)
         {
             if (IsEmpty())
                 return null;
             return FindNode(key, _root);
         }
-
-        public virtual IEnumerable GetRange(Tkey minKey, Tkey maxKey) => GetRange(_root, minKey, maxKey);
-        protected virtual IEnumerable GetRange(TreeNode node, Tkey minKey, Tkey maxKey)
+        /// <summary>
+        /// Return an enumrable collection which hold all the ranged key between min and max
+        /// </summary>
+        /// <param name="minKey">The minimum <see cref="Tkey"/></param>
+        /// <param name="maxKey">The maximun <see cref="Tkey"/></param>
+        /// <returns>Enumrable collection that holds all the boxes within the range or none</returns>
+        public IEnumerable GetRange(Tkey minKey, Tkey maxKey) => GetRange(_root, minKey, maxKey);
+        protected IEnumerable GetRange(TreeNode node, Tkey minKey, Tkey maxKey)
         {
             if (node == null) yield break;
 
@@ -329,37 +315,11 @@ namespace Model.DataStructures
                 yield return rightNode;
         }
 
-        //public bool FindLilBiggerValue(Tkey minKey, Tkey maxKey, out Tvalue value) // O(log n)
-        //{
-        //    if (IsEmpty())
-        //    {
-        //        value = default(Tvalue);
-        //        return false;
-        //    }
-        //    value = FindLilBiggerValue(minKey, maxKey, _root);
-        //    return value != null;
-        //}
-        //Tvalue FindLilBiggerValue(Tkey minKey, Tkey maxKey, TreeNode node) // O(log n)
-        //{
-        //    if (node == null) return default;
-        //    int compMIN = node.CompareTo(minKey);
-        //    int compMAX = node.CompareTo(maxKey);
-
-        //    if (compMIN >= 0 && compMAX <= 0) // If the dimensions match the 
-        //        if (node.Left != null && node.Left.Key.CompareTo(minKey) > 0 && !node.Left.Visted)
-        //            return FindLilBiggerValue(minKey, maxKey, node.Left);
-        //        else
-        //        {
-        //            node.Visted = true;
-        //            return node.Value;
-        //        }
-        //    else if (compMIN < 0)
-        //        return FindLilBiggerValue(minKey, maxKey, node.Right);
-        //    else if (compMAX > 0)
-        //        return FindLilBiggerValue(minKey, maxKey, node.Left);
-        //    return default;
-        //}
-
+        /// <summary> 
+        /// An enumrable function the get an Order to return the BSTree order nodes / values
+        /// </summary>
+        /// <param name="order">The <see cref="Traversal"/> enum that let the bstree know what order to be return</param>
+        /// <returns>Return the selected order enumrable collection tree</returns>
         public IEnumerable OrderPick(Traversal order)
         {
             switch (order)
@@ -466,14 +426,14 @@ namespace Model.DataStructures
         public TreeNode ReBuildTree(TreeNode root)
         {
             // Store nodes of given BST in sorted order
-            List<TreeNode> nodes = new List<TreeNode>();
+            ObservableCollection<TreeNode> nodes = new ObservableCollection<TreeNode>();
             StoreBSTNodes(root, nodes);
 
             // Constructs BST from nodes[]
             int n = nodes.Count;
             return BuildTreeUtil(nodes, 0, n - 1);
         }
-        public TreeNode BuildTreeUtil(List<TreeNode> nodes, int start, int end)
+        public TreeNode BuildTreeUtil(ObservableCollection<TreeNode> nodes, int start, int end)
         {
             if (start > end) return null; // base case
 
@@ -487,7 +447,7 @@ namespace Model.DataStructures
 
             return node;
         }
-        public void StoreBSTNodes(TreeNode root, List<TreeNode> nodes)
+        public void StoreBSTNodes(TreeNode root, ObservableCollection<TreeNode> nodes)
         {
             if (root == null) return; // Base case
             // Store nodes in Inorder (which is sorted order for BST)

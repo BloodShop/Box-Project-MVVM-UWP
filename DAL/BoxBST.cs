@@ -184,9 +184,8 @@ namespace DAL
                     amount -= box.Amount;
                     yield return box;
                     Remove(box, MAX_AMOUNT_BOXES);
-                    
                 }
-                else // (box.Amount > amount)
+                else // (amount < box.Amount)
                 {
                     box.AmountBought = amount;
                     box.Amount -= amount;
