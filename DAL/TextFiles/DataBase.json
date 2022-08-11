@@ -1,1 +1,154 @@
-﻿
+﻿[
+  {
+    "Amount": 7,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 10.32,
+    "Height": 7.0
+  },
+  {
+    "Amount": 9,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 10.32,
+    "Height": 12.0
+  },
+  {
+    "Amount": 14,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 10.32,
+    "Height": 17.0
+  },
+  {
+    "Amount": 17,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 19.87,
+    "Height": 20.0
+  },
+  {
+    "Amount": 13,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 19.87,
+    "Height": 23.0
+  },
+  {
+    "Amount": 28,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 19.87,
+    "Height": 24.0
+  },
+  {
+    "Amount": 2,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 19.87,
+    "Height": 26.0
+  },
+  {
+    "Amount": 6,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 50.82,
+    "Height": 26.0
+  },
+  {
+    "Amount": 6,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 50.82,
+    "Height": 33.0
+  },
+  {
+    "Amount": 6,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 66.48,
+    "Height": 10.0
+  },
+  {
+    "Amount": 3,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 66.48,
+    "Height": 18.0
+  },
+  {
+    "Amount": 4,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 66.48,
+    "Height": 24.0
+  },
+  {
+    "Amount": 15,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 66.48,
+    "Height": 28.0
+  },
+  {
+    "Amount": 5,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 67.43,
+    "Height": 5.0
+  },
+  {
+    "Amount": 9,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 67.43,
+    "Height": 19.0
+  },
+  {
+    "Amount": 18,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 67.43,
+    "Height": 20.0
+  },
+  {
+    "Amount": 6,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 67.43,
+    "Height": 30.0
+  },
+  {
+    "Amount": 7,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 67.43,
+    "Height": 38.0
+  },
+  {
+    "Amount": 19,
+    "LastUsedDate": "2022-08-01T00:00:00",
+    "DateDifference": 10,
+    "AmountBought": 0,
+    "Width": 69.49,
+    "Height": 30.0
+  }
+]

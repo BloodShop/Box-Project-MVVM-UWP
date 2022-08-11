@@ -12,18 +12,20 @@ namespace DAL
         static Configuration _config;
         static bool _init = true;
 
+        // Store's Repository
         static BSTree<double, BSTree<double, Box>> _main;
         static BSTree<double, BSTree<double, Box>> _cloneTree;
         static DoublyLinkedQueue<Box> _dateQ;
         static DoublyLinkedQueue<Box> _cloneQ;
 
+        // Constants which are declared at the configuration
         public readonly double PERCENTAGES_SEARCH_RANGE;
         public readonly int ADD_EXPIRY_DAYS;
         public readonly int WARNING_QUANTITY;
         public readonly int MAX_AMOUNT_BOXES;
         public readonly int DAYS_TO_EXPIRE;
 
-        public Action Retrieve { get => () => { _main = _cloneTree; _dateQ = _cloneQ; }; }
+        public Action Retrieve => () => { _main = _cloneTree; _dateQ = _cloneQ; }; // Retrieve function to the original repo
         public DoublyLinkedQueue<Box> DateQ { get => _dateQ; }
 
         public BoxesBST()
@@ -82,13 +84,42 @@ namespace DAL
                         action(x + "\n");
         }
 #endif
+        /// <summary>
+        /// Contains function which return boolean if the Box exicts at the repository or not
+        /// </summary>
+        /// <param name="Width">The given Width of the box <see cref="Box.Width"/></param>
+        /// <param name="Height">The given Height of the box <see cref="Box.Height"/></param>
+        /// <param name="box">Out parameter if the box exicts <see cref="Box"/></param>
+        /// <returns></returns>
+        public bool Contains(double Width, double Height, out Box box)
+        {
+            if (_main.FindValue(Width, out BSTree<double, Box> yTree))
+                if (yTree.FindValue(Height, out box))
+                    return true;
+            box = null;
+            return false;
+        }
+        /// <summary>
+        /// If Box Exicts Add to the box the given amount
+        /// </summary>
+        /// <param name="box">The box that exicts and you want to add to it curtain amount</param>
+        /// <param name="amount">The amount to add to the given box</param>
+        public void AddToExicting(Box box, int amount)
+        {
+            if(box.Amount + amount <= MAX_AMOUNT_BOXES) box.Amount += amount;
+            else box.Amount = MAX_AMOUNT_BOXES;
+        }
+        /// <summary>
+        /// Add's a box to the store repository
+        /// </summary>
+        /// <param name="box">The given box to add to the store <see cref="Box"/></param>
         public void Add(Box box)
         {
             if (box.Amount == 0) return;
 
             if (_main.FindValue(box.Width, out BSTree<double, Box> yTree))
                 if (yTree.FindValue(box.Height, out Box current))
-                    current.Amount += box.Amount; // if the box exist already just add the amount
+                    AddToExicting(current, box.Amount);
                 else
                 {
                     yTree.Add(box.Height, box);
@@ -101,6 +132,12 @@ namespace DAL
                 box.SelfRefrence = _dateQ.EnQueue(box);
             }
         }
+        /// <summary>
+        /// Remove's a box out of the repository of the store if exicts
+        /// </summary>
+        /// <param name="box">The required box to remove from store <see cref="Box"/></param>
+        /// <param name="amount">The amount to remove from the store repository</param>
+        /// <returns></returns>
         public Box Remove(Box box, int amount)
         {
             if (box == null) return null;
@@ -123,6 +160,14 @@ namespace DAL
                 }
             return null;
         }
+        /// <summary>
+        /// Get all Regueired Boxes with-in the asked dimensions
+        /// </summary>
+        /// <param name="width">The Width dimension of the box <see cref="Box.Width"/> </param>
+        /// <param name="height">The Height dimension of the box <see cref="Box.Height"/></param>
+        /// <param name="amount">The amount of this specific box you want to get <see cref="Box.Amount"/></param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Expected exception which thrown while there are no appropriate Box Dimensions</exception>
         public IEnumerable<Box> Get(double width, double height, int amount)
         {
             CloneTree();
@@ -138,10 +183,8 @@ namespace DAL
                     box.AmountBought = box.Amount;
                     amount -= box.Amount;
                     yield return box;
-                    { // Lastly Delete the box quantity to 0 
-
-                        Remove(box, 40);
-                    }
+                    Remove(box, MAX_AMOUNT_BOXES);
+                    
                 }
                 else // (box.Amount > amount)
                 {
@@ -157,6 +200,12 @@ namespace DAL
                 }
             }
         }
+        /// <summary>
+        /// Get all boxes that fit with-in the Min and Max asked range
+        /// </summary>
+        /// <param name="width">The Width dimension of the box <see cref="Box.Width"/> </param>
+        /// <param name="height">The Height dimension of the box <see cref="Box.Height"/></param>
+        /// <returns></returns>
         DoublyLinkedQueue<Box> GetRange(double width, double height)
         {
             double newWidth = width + width * (PERCENTAGES_SEARCH_RANGE / 100);
@@ -173,7 +222,7 @@ namespace DAL
 
             return rangedBoxes;
         }
-        void CloneTree()
+        void CloneTree() // Creates a clone tree of the main existing 
         {
             _cloneTree = new BSTree<double, BSTree<double, Box>>();
             foreach (Box box in this)
@@ -208,7 +257,7 @@ namespace DAL
             //Task.WaitAll(t1, t2);
             #endregion
         }
-        void CloneQueue()
+        void CloneQueue() // Creates a clone queue of the dateQueue existing 
         {
             _cloneQ = new DoublyLinkedQueue<Box>();
             foreach (Box box in _dateQ)
@@ -217,6 +266,10 @@ namespace DAL
                 _cloneQ.EnQueue(clone);
             }
         }
+        /// <summary>
+        /// IEnumrable function which retrieves all boxes in the store repository from the Tree search InOrder way
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator GetEnumerator()
         {
             foreach (var item in _main.OrderPick(Traversal.InOrder))

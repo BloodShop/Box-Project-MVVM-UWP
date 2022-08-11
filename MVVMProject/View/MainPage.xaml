@@ -110,8 +110,7 @@
                             <TextBlock Text="{x:Bind Height, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Height - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Amount, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=Amount - \{0:00\}}" FontFamily="Book Antiqua"/>
-                                <TextBlock Margin="5,0,0,0" Text="{Binding LastUsedDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Recieved_Goods - \{0:d\}}" FontFamily="Book Antiqua"/>
-                                <TextBlock Margin="5,0,0,0" Text="{Binding ExpirationDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Expiration_Date - \{0:d\}}" FontFamily="Book Antiqua"/>
+                                <!--<TextBlock Margin="5,0,0,0" Text="{Binding LastUsedDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Last-Used - \{0:d\}}" FontFamily="Book Antiqua"/>-->
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -120,7 +119,7 @@
         </ListView>
         <ListView x:Name="QueueDateLV" Grid.Row="4" Grid.Column="2" Grid.RowSpan="2" FontFamily="Book Antiqua" BorderThickness="3"
                   BorderBrush="#FF431161" Background="#66DA0C0C" Visibility="Visible" IsItemClickEnabled="False"
-                  Margin="15,15,15,15" ItemsSource="{Binding DateQueueBoxes, Mode=TwoWay}">
+                  Margin="15,15,15,15" ItemsSource="{Binding DateQueueBoxes, Mode=TwoWay}" DoubleTapped="QueueDateLV_DoubleTapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="x1:Box">
                     <StackPanel Orientation="Horizontal" Margin="6">
@@ -131,8 +130,7 @@
                             <TextBlock Text="{x:Bind Height, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=  Height - \{0:0.00\}}" FontWeight="Bold" FontFamily="Ubuntu"/>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Amount, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter=Amount - \{0:00\}}" FontFamily="Book Antiqua"/>
-                                <TextBlock Margin="5,0,0,0" Text="{Binding LastUsedDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Recieved_Goods - \{0:d\}}" FontFamily="Book Antiqua"/>
-                                <TextBlock Margin="5,0,0,0" Text="{Binding ExpirationDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Expiration_Date - \{0:d\}}" FontFamily="Book Antiqua"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding LastUsedDate, Converter={StaticResource StringFormatterValueConverter}, ConverterParameter= | Last-Used - \{0:d\}}" FontFamily="Book Antiqua"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

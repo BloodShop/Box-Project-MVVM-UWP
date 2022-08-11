@@ -35,8 +35,19 @@ namespace MVVMProject
             {
                 WidthTB.Text = ((Box)BoxesLV?.SelectedItem)?.Width.ToString();
                 HeightTB.Text = ((Box)BoxesLV?.SelectedItem)?.Height.ToString();
-                DataPackage dp = new DataPackage(); // Copy To clipboard the guid of the selected item
+                DataPackage dp = new DataPackage(); // Copy To clipboard the Height of the selected item
                 dp.SetText($"{((Box)BoxesLV?.SelectedItem)?.Height}");
+                Clipboard.SetContent(dp);
+            }
+        }
+        void QueueDateLV_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (QueueDateLV.SelectedIndex >= 0)
+            {
+                AddWidthTB.Text = ((Box)QueueDateLV?.SelectedItem)?.Width.ToString();
+                AddHeightTB.Text = ((Box)QueueDateLV?.SelectedItem)?.Height.ToString();
+                DataPackage dp = new DataPackage(); // Copy To clipboard the Height of the selected item
+                dp.SetText($"{((Box)QueueDateLV?.SelectedItem)?.Height}");
                 Clipboard.SetContent(dp);
             }
         }
@@ -62,18 +73,13 @@ namespace MVVMProject
                 var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
                 var appFolder = ApplicationData.Current.LocalFolder;
                 var file = await appFolder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
-                string jsonString = JsonSerializer.Serialize<DataBase>(DataBase.Instance, options);
+                string jsonString = JsonSerializer.Serialize(DataBase.Instance, options);
                 await FileIO.WriteTextAsync(file, jsonString);
-
                 Debug.WriteLine(String.Format($"File is located at {file.Path}"));
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
         }
-        void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            //Save_Click(this, null);
-            //Application.Current.Exit();
-        }
+        void Exit_Click(object sender, RoutedEventArgs e) { }
         #endregion
         #endregion
     }

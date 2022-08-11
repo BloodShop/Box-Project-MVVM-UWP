@@ -3,14 +3,18 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace DAL
 {
     public class DataBase
     {
         private static readonly object _lock = new object();
-        public static Box[] Boxes { get; private set; } = new Box[20];
+        public static Box[] Boxes { get; private set; } = new Box[100];
         static DataBase _instance;
         public static DataBase Instance
         {
@@ -19,13 +23,12 @@ namespace DAL
                 lock (_lock)
                 {
                     if (_instance == null)
-                        //InitDataBaseJson();
                         _instance = new DataBase();
+                    //InitDataBaseJson();
                 }
                 return _instance;
             }
         }
-        public DataBase(DataBase instance) => _instance = instance; // Json
         DataBase()
         {
             Random r = new Random();
@@ -34,16 +37,42 @@ namespace DAL
             {
                 if (i % 7 == 0 || i % 5 == 0) m = r.NextDouble() * 100;
                 Boxes[i] = new Box(m, r.Next(5, 40), r.Next(1, 20));
-                Boxes[i].LastUsedDate = new DateTime(2022,7,01);
+                Boxes[i].LastUsedDate = new DateTime(2022, 8, 01);
             }
         }
-        public static void SaveJson(ObservableCollection<Box> collection)
+        public static void SaveDataBaseJson(ObservableCollection<Box> collection)
         {
             try
             {
-                var configPath = Path.Combine(Environment.CurrentDirectory, "TextFiles/DataBase.json"); // ms-appx:///
-                var json = JsonConvert.SerializeObject(collection, Formatting.Indented);
-                File.WriteAllText(configPath, json);
+                //string json = JsonConvert.SerializeObject(collection);
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + ".json";
+
+                //if (File.Exists(path))
+                //    File.WriteAllText(path, json);
+
+                //    using (StreamWriter file = File.CreateText(path))
+                //    {
+                //        JsonSerializer serializer = new JsonSerializer();
+                //        //serialize object directly into file stream
+                //        serializer.Serialize(file, json);
+                //    }
+
+                // Track where the file is located
+                //Debug.WriteLine(String.Format($"File is located at {file.Path}"));
+
+                //var configPath = Path.Combine(Environment.CurrentDirectory, "TextFiles\\DataBase.json"); // ms-appx:///
+                //var json = JsonConvert.SerializeObject(collection);
+
+                //using (StreamWriter file = File.CreateText(configPath))
+                //{
+                //    JsonSerializer serializer = new JsonSerializer();
+                //    //serialize object directly into file stream
+                //    serializer.Serialize(file, json);
+                //}
+
+                //File.WriteAllText(configPath, json);
+                // G:\SeLa\ShayTavor\1111MVVMProject\MVVMProject\DAL\TextFiles\DataBase.json
+                // G:\SeLa\ShayTavor\1111MVVMProject\MVVMProject\MVVMProject\bin\x86\Debug\AppX\TextFiles\DataBase.json
             }
             catch (Exception) { }
         }
@@ -51,11 +80,20 @@ namespace DAL
         {
             try
             {
-                var configPath = Path.Combine(Environment.CurrentDirectory, "TextFiles\\DataBase.json");
-                var raw = File.ReadAllText(configPath);
+                string configPath = Path.Combine(Environment.CurrentDirectory, "TextFiles\\DataBase.json");
+                string raw = File.ReadAllText(configPath);
                 if (raw != null) _instance = JsonConvert.DeserializeObject<DataBase>(raw);
             }
             catch (Exception) { _instance = new DataBase(); }
+
+            //try
+            //{  // Read File path
+            //    StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+            //    StorageFile sampleFile = await storageFolder.GetFileAsync("DataBase.json");
+            //    string jsonFromFile = await FileIO.ReadTextAsync(sampleFile);
+            //    Boxes = JsonConvert.DeserializeObject<Box[]>(jsonFromFile);
+            //}
+            //catch (Exception ex) {  }
         }
     }
 }

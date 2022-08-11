@@ -190,6 +190,7 @@ namespace MVVMProject.ViewModel
         double _addHeight;
         #endregion
         #endregion
+
         // Buttons command
         public ICommand AddCommand => new DelegateCommand(AddBox);
         public ICommand RemoveCommand => new DelegateCommand(RemoveBox);
@@ -198,7 +199,7 @@ namespace MVVMProject.ViewModel
 
         void ExitSave()
         {
-            DataBase.SaveJson(AllBoxes);
+            DataBase.SaveDataBaseJson(AllBoxes);
             Application.Current.Exit();
         }
         /// <summary>
@@ -206,12 +207,25 @@ namespace MVVMProject.ViewModel
         /// </summary>
         void AddBox()
         {
-            if (_addAmount > _boxBST.MAX_AMOUNT_BOXES)
+            if (!_boxBST.Contains(_addWidth, _addHeight, out Box box))
             {
-                Message($"Cannot add more boxes than maximum\n{_addAmount - _boxBST.MAX_AMOUNT_BOXES} boxes were Retrieved", "Back Supply");
-                _addAmount = _boxBST.MAX_AMOUNT_BOXES;
+                if (_addAmount > _boxBST.MAX_AMOUNT_BOXES)
+                {
+                    Message($"Cannot add more boxes than maximum\n{_addAmount - _boxBST.MAX_AMOUNT_BOXES} boxes were Retrieved", "Back Supply");
+                    AddAmount = _boxBST.MAX_AMOUNT_BOXES;
+                }
+                _boxBST.Add(new Box(_addWidth, _addHeight, _addAmount));
             }
-            _boxBST.Add(new Box(_addWidth, _addHeight, _addAmount));
+            else
+            {
+                if (_addAmount + box.Amount > _boxBST.MAX_AMOUNT_BOXES)
+                {
+                    Message($"Cannot add more boxes than maximum\n{_addAmount + box.Amount - _boxBST.MAX_AMOUNT_BOXES} boxes were Retrieved", "Back Supply");
+                    AddAmount = _boxBST.MAX_AMOUNT_BOXES - box.Amount;
+                }
+                _boxBST.AddToExicting(box, _addAmount);
+            }
+            
             InitListViews();
         }
         /// <summary>
@@ -235,11 +249,11 @@ namespace MVVMProject.ViewModel
             {
                 PurchaseBoxes?.Clear();
                 foreach (Box b in _boxBST.Get(_searchWidth, _searchHeight, _searchAmount))
-                    PurchaseBoxes?.Add(b/*, (x) => x.DateDifference < b.DateDifference*/);
+                    PurchaseBoxes?.Add(b);
 
                 IUICommand resultDialog = await VerifyMessage();
                 if (resultDialog.Label == "No")
-                    _boxBST.Retrieve();
+                    throw new Exception("Offer was declined");
                 else
                 {
                     foreach (Box box in PurchaseBoxes)
@@ -275,22 +289,22 @@ namespace MVVMProject.ViewModel
 
         void Init_Timer() // Initialize Timer when app loaded
         {
-            timer.Interval = new TimeSpan(0, 0, 0, 10);
             QueueTimer.Interval = new TimeSpan(0, 0, 0, 1);
-            timer.Tick += ManageTmr_Tick;
+            timer.Interval = new TimeSpan(0, 0, 2, 0);
             QueueTimer.Tick += ShowTime_Tick;
-            timer.Start();
+            timer.Tick += ManageTmr_Tick;
             QueueTimer.Start();
+            timer.Start();
         }
         private void ShowTime_Tick(object sender, object e) => TimeToday = DateTime.Now;
 
         void ManageTmr_Tick(object sender, object e) // Deletes front box if DateDiffernce is 0 - every 24 hours
         {
-            var t = _boxBST.DateQ.Front;
-            while (!_boxBST.DateQ.IsEmpty() && (DateTime.Now - t.Data.LastUsedDate).Days >= _boxBST.DAYS_TO_EXPIRE)
+            var qNode = _boxBST.DateQ.Peek().SelfRefrence;
+            while (!_boxBST.DateQ.IsEmpty() && (DateTime.Now - qNode.Data.LastUsedDate).Days >= _boxBST.DAYS_TO_EXPIRE)
             {
                 _boxBST.Remove((Box)_boxBST.DateQ.DeQueue().Clone(), int.MaxValue);
-                t = t.Next;
+                qNode = qNode.Next;
             }
             InitListViews();
         }

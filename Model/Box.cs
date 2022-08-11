@@ -1,14 +1,16 @@
 ﻿using Model.DataStructures;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+
 
 namespace Model
 {
     public class Box : IFormattable, ICloneable/*, IComparable<Box>*/
     {
-        public Func<string> BackSupply { get; private set; }
-        public Func<int, bool> WarningQnt { get => (x) => _amount <= x; }
+        [JsonIgnore] public Func<string> BackSupply { get; private set; }
+        [JsonIgnore] public Func<int, bool> WarningQnt { get => (x) => _amount <= x; }
 
         int _amount;
         int _amountBought;
@@ -16,7 +18,7 @@ namespace Model
         double _width;
         double _height;
 
-        public QNode<Box> SelfRefrence;
+        [JsonIgnore] public QNode<Box> SelfRefrence;
 
         public int Amount
         {
