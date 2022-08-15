@@ -1,9 +1,12 @@
 # Box-Project-MVVM-UWP
 DataStructures and Algorithms Complexity Box WareHouse. Most searches Time complexity of `Θ(log n)`.
 The main WareHouse stores a BSTree of generic type `<double, BSTree<double, Box>`, *TKey* and *TValue* - an inner Tree.
+The WareHouse class uses it's own function and condition in order to implement the Binary Search Tree Time comlexity of Insertion, Deletion, Add, Search and etc.
 
 ## MVVM Project devided to three parts
 #### 1. Model (Boxes WareHouse, Configuration, DataStructures...)
+> The BSTree has an efficient function over finding several item between certain range dimension of the requested box. This IEnumrable function yield return all the values with-in the requested range dimensions.
+https://github.com/BloodShop/Box-Project-MVVM-UWP/blob/30c148271fee37ccf24a986242c59cc763cfe5ca/Model/DataStructures/BSTree.cs#L299-L315
 #### 2. View (XAML)
 
 <p align="center"> Running application - AllBoxes on the left, dateQueue on the right and the search offer</p>
