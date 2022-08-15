@@ -1,7 +1,7 @@
 {
   "PercentagesSearchRange": 25,
   "AddExpiryDate": 25,
-  "WarningQuantity": 4,
+  "WarningQuantity": 5,
   "MaxAmountOfBoxes": 45,
   "DaysToExpire": 40
 }

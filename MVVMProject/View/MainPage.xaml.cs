@@ -17,6 +17,7 @@ namespace MVVMProject
 
         #region MyComfort
         #region Copy to ClipBoard Height and Width
+        void Refresh() => Frame.Navigate(typeof(MainPage));
         void ClearBtn_Click(object sender, RoutedEventArgs e) /* Refresh(); */
         {
             WidthTB.Text = string.Empty;
@@ -81,6 +82,8 @@ namespace MVVMProject
         }
         void Exit_Click(object sender, RoutedEventArgs e) { }
         #endregion
+
         #endregion
+
     }
 }

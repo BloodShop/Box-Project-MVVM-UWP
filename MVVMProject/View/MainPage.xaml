@@ -78,7 +78,7 @@
                     Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="150" Content="Add"/>
         </StackPanel>
 
-        <ListView x:Name="GetPurchaseLV" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
+        <ListView x:Name="GetPurchaseLV" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" MinHeight="200" MinWidth="300"
                   FontFamily="Book Antiqua" BorderThickness="3" BorderBrush="#FF431161"
                   Background="#66DA0C0C" Margin="15,15,15,15" SelectionChanged="BoxesLV_SelectionChanged"
                   ItemsSource="{Binding PurchaseBoxes, Mode=TwoWay}" Tapped="BoxesLV_Tapped" DoubleTapped="BoxesLV_DoubleTapped">

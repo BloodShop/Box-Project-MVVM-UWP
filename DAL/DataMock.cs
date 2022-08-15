@@ -14,7 +14,7 @@ namespace DAL
     public class DataBase
     {
         private static readonly object _lock = new object();
-        public static Box[] Boxes { get; private set; } = new Box[100];
+        public static Box[] Boxes { get; private set; } = new Box[5];
         static DataBase _instance;
         public static DataBase Instance
         {
@@ -40,7 +40,7 @@ namespace DAL
                 Boxes[i].LastUsedDate = new DateTime(2022, 7, 02);
             }
         }
-        public static void SaveDataBaseJson(ObservableCollection<Box> collection)
+        public static void SaveDataBaseJson(Box[] collection)
         {
             try
             {

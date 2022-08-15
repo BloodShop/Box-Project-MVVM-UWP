@@ -26,7 +26,7 @@ namespace DAL
         public readonly int DAYS_TO_EXPIRE;
 
         public Action Retrieve => () => { _main = _cloneTree; _dateQ = _cloneQ; }; // Retrieve function to the original repo
-        public DoublyLinkedQueue<Box> DateQ { get => _dateQ; }
+        public DoublyLinkedQueue<Box> DateQ => _dateQ;
 
         public BoxesBST()
         {
@@ -87,11 +87,24 @@ namespace DAL
         /// <summary>
         /// Contains function which return boolean if the Box exicts at the repository or not
         /// </summary>
+        /// <param name="Width"></param>
+        /// <param name="Height"></param>
+        /// <returns>Return boolean answer if exists or not</returns>
+        public bool Contains(double Width, double Height) // Time complexity O (log n)
+        {
+            if (_main.FindValue(Width, out BSTree<double, Box> yTree))
+                if (yTree.FindValue(Height, out Box box))
+                    return true;
+            return false;
+        }
+        /// <summary>
+        /// Contains function which return boolean if the Box exicts at the repository or not
+        /// </summary>
         /// <param name="Width">The given Width of the box <see cref="Box.Width"/></param>
         /// <param name="Height">The given Height of the box <see cref="Box.Height"/></param>
         /// <param name="box">Out parameter if the box exicts <see cref="Box"/></param>
-        /// <returns></returns>
-        public bool Contains(double Width, double Height, out Box box)
+        /// <returns>Return boolean answer if exists or not</returns>
+        public bool Contains(double Width, double Height, out Box box) // Time complexity O (log n)
         {
             if (_main.FindValue(Width, out BSTree<double, Box> yTree))
                 if (yTree.FindValue(Height, out box))
@@ -106,20 +119,24 @@ namespace DAL
         /// <param name="amount">The amount to add to the given box</param>
         public void AddToExicting(Box box, int amount)
         {
-            if(box.Amount + amount <= MAX_AMOUNT_BOXES) box.Amount += amount;
+            if (box.Amount + amount <= MAX_AMOUNT_BOXES)
+                box.Amount += amount;
             else box.Amount = MAX_AMOUNT_BOXES;
         }
         /// <summary>
         /// Add's a box to the store repository
         /// </summary>
         /// <param name="box">The given box to add to the store <see cref="Box"/></param>
-        public void Add(Box box)
+        public void Add(Box box)  // Time complexity O (log n)
         {
             if (box.Amount == 0) return;
 
             if (_main.FindValue(box.Width, out BSTree<double, Box> yTree))
                 if (yTree.FindValue(box.Height, out Box current))
-                    AddToExicting(current, box.Amount);
+                {
+                    AddToExicting(current, current.Amount);
+                    _dateQ.EnQueue(current);
+                }
                 else
                 {
                     yTree.Add(box.Height, box);
@@ -138,26 +155,25 @@ namespace DAL
         /// <param name="box">The required box to remove from store <see cref="Box"/></param>
         /// <param name="amount">The amount to remove from the store repository</param>
         /// <returns></returns>
-        public Box Remove(Box box, int amount)
+        public Box Remove(Box box, int amount) // Time complexity O (log n)
         {
             if (box == null) return null;
 
             if (_main.FindValue( /*Tkey*/ box.Width, /*Tvalue*/ out BSTree<double, Box> yTree))
                 if (yTree.FindValue(box.Height, out Box current))
-                {
                     if (amount >= box.Amount)
                     {
                         box.Amount = 0;
                         yTree.Remove(box.Height);
-                        if (amount != int.MaxValue) _dateQ.DeleteNode(box.SelfRefrence); // O(1)
-                        current.Amount -= 0;
+                        if (amount != int.MaxValue)
+                            _dateQ.DeleteNode(box.SelfRefrence); // O(1)
+                        return box;
                     }
                     else
                     {
                         current.Amount -= amount;
                         return current;
                     }
-                }
             return null;
         }
         /// <summary>
@@ -182,6 +198,7 @@ namespace DAL
                 {
                     box.AmountBought = box.Amount;
                     amount -= box.Amount;
+                    box.Amount = 0;
                     yield return box;
                     Remove(box, MAX_AMOUNT_BOXES);
                 }
@@ -271,10 +288,9 @@ namespace DAL
         /// <returns></returns>
         public IEnumerator GetEnumerator()
         {
-            foreach (var item in _main.OrderPick(Traversal.InOrder))
-                if (item is BSTree<double, Box> bst)
-                    foreach (Box y in bst.OrderPick(Traversal.InOrder))
-                        yield return y;
+            foreach (BSTree<double, Box> bst in _main.OrderPick(Traversal.InOrder))
+                foreach (Box box in bst.OrderPick(Traversal.InOrder))
+                    yield return box;
         }
     }
 }

@@ -87,7 +87,7 @@ namespace Model.DataStructures
         /// <returns></returns>
         public QNode<T> EnQueue(T data) // Add a node into queue O(1) 
         {
-            if (data == null) return null;
+            if (data == null) return null; // Also could throw an Exception
             var node = new QNode<T>(data, _last); // Create a new node
             if (IsEmpty())
             {
@@ -99,8 +99,7 @@ namespace Model.DataStructures
                 _last.Next = node;
                 Size++;
             }
-            _last = node;
-            return _last;
+            return _last = node;
         }
         /// <summary>
         /// Boolean function Return wheather the queue is empty or not
@@ -113,8 +112,9 @@ namespace Model.DataStructures
         /// <returns></returns>
         public T Peek() // Get a front data of queue O(1) 
         {
-            if (IsEmpty()) return default;
-            else return _front.Data;
+            if (IsEmpty())
+                return null;
+            return _front.Data;
         }
         /// <summary>
         /// Removes and return the front object of the <see cref="DoublyLinkedQueue{T}"/>
@@ -123,38 +123,21 @@ namespace Model.DataStructures
         public T DeQueue() // Removes and return the front object of the queue O(1) 
         {
             if (IsEmpty())
-                return default;
+                return null;
+
+            var data = Peek();
+            if (_front == _last) // When queue contains only one node
+            {
+                _last = null;
+                _front = null;
+            }
             else
             {
-                var data = Peek();
-                if (_front == _last) // When queue contains only one node
-                {
-                    _last = null;
-                    _front = null;
-                }
-                else
-                {
-                    _front = _front.Next;
-                    _front.Prev = null;
-                }
-                Size--;
-                return data;
+                _front = _front.Next;
+                _front.Prev = null;
             }
-        }
-        /// <summary>
-        /// Prints the Data of the queue
-        /// </summary>
-        /// <param name="action">The action you want to pass wheather it's console -> c.w</param>
-        public void PrintQdata(Action<string> action) // Print elements of queue
-        {
-            var node = _front;
-            action("\nQueue Element");
-            while (node != null)
-            {
-                action($" {node.Data}");
-                node = node.Next;
-            }
-            action("\n");
+            Size--;
+            return data;
         }
         /// <summary>
         /// Deletes an un-known node by giving the data of the node - O(n)
@@ -178,17 +161,22 @@ namespace Model.DataStructures
         {
             if (IsEmpty()) return; // Base case
 
-            if (del.Prev == null)
+            if (del.Prev == null && del.Next == null) // if only one element in the queue
+            {
+                Clear();
+                return;
+            }
+            if (del.Prev == null) // first element
             {
                 _front = del.Next;
-                if(del.Next != null) _front.Prev = null;
+                if (_front != null) _front.Prev = null;
             }
-            else if (del.Next == null)
+            else if (del.Next == null) // last element
             {
                 _last = del.Prev;
-                _last.Next = null;
+                if (_last != null) _last.Next = null;
             }
-            else
+            else // some-where inside the queue
             {
                 del.Prev.Next = del.Next;
                 del.Next.Prev = del.Prev;
@@ -213,7 +201,7 @@ namespace Model.DataStructures
             #endregion
         }
         /// <summary>
-        /// Return an enumertor that iterats through the <see cref="DoublyLinkedQueue{T}"/> - O(n)
+        /// Return an enumertor that iterates through the <see cref="DoublyLinkedQueue{T}"/> - O(n)
         /// </summary>
         /// <returns></returns>
         public IEnumerator GetEnumerator() // Enumerates through all the elements in queue 
@@ -224,6 +212,21 @@ namespace Model.DataStructures
                 yield return node.Data;
                 node = node.Next;
             }
+        }
+        /// <summary>
+        /// Prints the Data of the queue
+        /// </summary>
+        /// <param name="action">The action you want to pass wheather it's console -> c.w</param>
+        public void PrintQdata(Action<string> action) // Print elements of queue 
+        {
+            var node = _front;
+            action("\nQueue Element");
+            while (node != null)
+            {
+                action($" {node.Data}");
+                node = node.Next;
+            }
+            action("\n");
         }
     }
 }

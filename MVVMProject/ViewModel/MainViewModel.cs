@@ -34,7 +34,16 @@ namespace MVVMProject.ViewModel
         /// <summary>
         /// List of 'wanted' boxes which the user wants to purchase --> Binded with GetPurchaseLV (ListView[xaml])
         /// </summary>
-        public ObservableCollection<Box> PurchaseBoxes { get; private set; } = new DoublyLinkedQueue<Box>();
+        public ObservableCollection<Box> PurchaseBoxes 
+        { 
+            get => _purchaseBoxes; 
+            private set
+            {
+                _purchaseBoxes = value;
+                RaisePropertyChanged(nameof(PurchaseBoxes));
+            }
+        }
+        ObservableCollection<Box> _purchaseBoxes = new ObservableCollection<Box>();
         /// <summary>
         /// List of boxes which has an exipiration date --> Binded with QueueDateLV (ListView[xaml])
         /// </summary>
@@ -42,7 +51,16 @@ namespace MVVMProject.ViewModel
         /// <summary>
         /// List of all boxes in store --> Binded with BoxesLV (ListView[xaml])
         /// </summary>
-        public ObservableCollection<Box> AllBoxes { get; private set; } = new DoublyLinkedQueue<Box>();
+        public ObservableCollection<Box> AllBoxes 
+        { 
+            get => _allBoxes; 
+            private set
+            {
+                _allBoxes = value;
+                RaisePropertyChanged(nameof(AllBoxes));
+            }
+        }
+        ObservableCollection<Box> _allBoxes = new ObservableCollection<Box>();
         /// <summary>
         /// The selectedBox in the BoxesLV (AllBoxes) which the user wants to remove
         /// </summary>
@@ -58,12 +76,10 @@ namespace MVVMProject.ViewModel
             DateQueueBoxes?.Clear();
             AllBoxes?.Clear();
             foreach (Box boxQ in _boxBST.DateQ)
-                DateQueueBoxes.Add(boxQ);
-
+                DateQueueBoxes.Add(boxQ); 
             foreach (Box box in _boxBST)
                 AllBoxes.Add(box);
         }
-
         #region Props
         #region Search Terms command
         public bool IsSearchValid
@@ -117,7 +133,8 @@ namespace MVVMProject.ViewModel
             get => _removeAmount;
             set
             {
-                _removeAmount = value;
+                if (value > 0) _removeAmount = value;
+                else _removeAmount = 1;
                 if (_removeAmount > 0 && SelectedBox != null && _removeAmount <= SelectedBox?.Amount) IsRemoveValid = true;
                 RaisePropertyChanged(nameof(RemoveAmount));
             }
@@ -151,6 +168,7 @@ namespace MVVMProject.ViewModel
             set
             {
                 if (value > 0) _addAmount = value;
+                else _addAmount = 1;
                 if (_addWidth > 0 && _addHeight > 0 && _addAmount > 0) IsAddValid = true;
                 RaisePropertyChanged(nameof(AddAmount));
             }
@@ -171,7 +189,8 @@ namespace MVVMProject.ViewModel
             get => _addWidth;
             set
             {
-                _addWidth = value;
+                if (value > 0) _addWidth = value;
+                else _addWidth = 0.01;
                 if (_addWidth > 0 && _addHeight > 0 && _addAmount > 0) IsAddValid = true;
                 RaisePropertyChanged(nameof(AddWidth));
             }
@@ -182,7 +201,8 @@ namespace MVVMProject.ViewModel
             get => _addHeight;
             set
             {
-                _addHeight = value;
+                if (value > 0) _addHeight = value;
+                else _addHeight = 0.01;
                 if (_addWidth > 0 && _addHeight > 0 && _addAmount > 0) IsAddValid = true;
                 RaisePropertyChanged(nameof(AddHeight));
             }
@@ -199,7 +219,7 @@ namespace MVVMProject.ViewModel
 
         void ExitSave()
         {
-            DataBase.SaveDataBaseJson(AllBoxes);
+            //DataBase.SaveDataBaseJson(AllBoxes);
             Application.Current.Exit();
         }
         /// <summary>
@@ -225,7 +245,7 @@ namespace MVVMProject.ViewModel
                 }
                 _boxBST.Add(new Box(_addWidth, _addHeight, _addAmount));
             }
-            
+
             InitListViews();
         }
         /// <summary>
@@ -257,7 +277,7 @@ namespace MVVMProject.ViewModel
                 else
                 {
                     foreach (Box box in PurchaseBoxes)
-                        if (box.WarningQnt(5)) Message(box.ToString(), "Warning quantity");
+                        if (box.WarningQnt(_boxBST.WARNING_QUANTITY)) Message(box.ToString(), "Warning quantity");
                     InitListViews();
                 }
             }
@@ -286,25 +306,23 @@ namespace MVVMProject.ViewModel
             dialog.Commands.Add(new UICommand("No"));
             return await dialog.ShowAsync();
         }
-
         void Init_Timer() // Initialize Timer when app loaded
         {
             QueueTimer.Interval = new TimeSpan(0, 0, 0, 1);
-            timer.Interval = new TimeSpan(0, 0, 10, 0);
+            timer.Interval = new TimeSpan(0, 0, 0, 8);
             QueueTimer.Tick += ShowTime_Tick;
             timer.Tick += ManageTmr_Tick;
             QueueTimer.Start();
             timer.Start();
         }
         private void ShowTime_Tick(object sender, object e) => TimeToday = DateTime.Now;
-
         void ManageTmr_Tick(object sender, object e) // Deletes front box if DateDiffernce is 0 - every 24 hours
         {
             if (_boxBST.DateQ.IsEmpty()) return;
             var qNode = _boxBST.DateQ.Peek().SelfRefrence;
             while (!_boxBST.DateQ.IsEmpty() && (DateTime.Now - qNode.Data.LastUsedDate).Days >= _boxBST.DAYS_TO_EXPIRE)
             {
-                _boxBST.Remove((Box)_boxBST.DateQ.DeQueue().Clone(), int.MaxValue);
+                _boxBST.Remove(_boxBST.DateQ.DeQueue(), int.MaxValue);
                 qNode = qNode.Next;
             }
             InitListViews();
