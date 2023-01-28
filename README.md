@@ -71,12 +71,12 @@ As such it is very useful when you want to know when the collection has changed.
 
 ## Explanation without Code
 #### Normal Collections - No Notifications
-Every now and then I go to NYC and my wife asks me to buy stuff. So I take a shopping list with me. The list has a lot of things on there like:
+Every now and then I go to TLV and my gf asks me to buy stuff. So I take a shopping list with me. The list has a lot of things on there like:
 + Louis Vuitton handbag ($5000)
 + Clive Christian’s Imperial Majesty Perfume ($215,000)
 + Gucci Sunglasses ($2000)
 
-hahaha well I"m not buying that stuff. So I cross them off and remove them from the list and I add instead:
+hahaha well I'm not buying that stuff. So I cross them off and remove them from the list and I add instead:
 - 12 dozen Titleist golf balls.
 - 12 lb bowling ball.
 
